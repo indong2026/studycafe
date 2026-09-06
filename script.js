@@ -960,9 +960,11 @@ signupBtn.onclick = async () => {
 // 🔥 선택한 날짜의 좌석 예약을 실시간으로 감시
 // 현재 실행 중인 Firestore 실시간 감시 목록
 let reservationUnsubscribers = [];
+let activeReservationDate = "";
 
 // 🔥 특정 날짜의 예약을 실시간으로 감시
 function listenReservations(date) {
+  activeReservationDate = date;
   // 기존 날짜의 실시간 감시 중지
   reservationUnsubscribers.forEach((unsubscribe) => {
     unsubscribe();
@@ -975,6 +977,7 @@ function listenReservations(date) {
     const ref = doc(db, "reservations", date, "seats", String(seat.num));
 
     const unsubscribe = onSnapshot(ref, (snap) => {
+      if (activeReservationDate !== date) return;
       if (snap.exists()) {
         const data = snap.data();
 
