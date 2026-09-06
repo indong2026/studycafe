@@ -310,6 +310,15 @@ reserveDate.addEventListener("change", async () => {
     return;
   }
 
+  if (selectedDate.slice(0, 7) !== todayString().slice(0, 7)) {
+    [lunchCheck, dinnerCheck, part1Check, part2Check].forEach((check) => {
+      check.disabled = true;
+      check.checked = false;
+    });
+    reserveTimeInfo.textContent = "이번 달 예약만 가능합니다.";
+    return;
+  }
+
   // ==========================================
   // 새로 선택한 날짜의 예약 정보 가져오기
   // ==========================================
@@ -1394,6 +1403,14 @@ function todayString() {
 
 // 🔥 예약 가능 여부 확인
 // 🔥 예약 가능 여부 확인
+function currentMonthEndString() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()).padStart(2, "0")}`;
+}
+
+reserveDate.min = todayString();
+reserveDate.max = currentMonthEndString();
+
 function canReserve() {
   const today = todayString();
   const selectedDate = reserveDate.value;
@@ -1406,6 +1423,11 @@ function canReserve() {
   // 과거 날짜는 예약 불가
   if (selectedDate < today) {
     alert("지난 날짜에는 예약할 수 없습니다.");
+    return false;
+  }
+
+  if (selectedDate.slice(0, 7) !== today.slice(0, 7)) {
+    alert("이번 달 예약만 가능합니다.");
     return false;
   }
 
